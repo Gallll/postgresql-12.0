@@ -1,0 +1,24 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "make&make install",
+            "command": "make -j8&make install",
+            "args": [
+            
+            ],
+            "options": {
+                "cwd": "${cwd}"
+            },
+            "problemMatcher": [
+              
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "调试器生成的任务。"
+        }
+    ],
+    "version": "2.0.0"
+}

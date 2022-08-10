@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "err.h": "c",
+        "libpq-fe.h": "c",
+        "ssl.h": "c",
+        "stdio.h": "c"
+    }
+}
