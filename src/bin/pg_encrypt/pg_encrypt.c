@@ -22,6 +22,7 @@
 #include <openssl/evp.h>
 #include <openssl/x509.h>
 #include "getopt_long.h"
+#include "postgres_fe.h"
 
 int base64_decode(char *in_str, int in_len, char *out_str);
 

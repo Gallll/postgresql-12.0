@@ -4,6 +4,8 @@
         "libpq-fe.h": "c",
         "ssl.h": "c",
         "stdio.h": "c",
-        "getopt_long.h": "c"
+        "getopt_long.h": "c",
+        "x509.h": "c",
+        "evp.h": "c"
     }
 }

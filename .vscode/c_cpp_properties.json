@@ -3,13 +3,16 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/local/include/**",
+                "/opt/homebrew/opt/**",
+                
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c89",
             "cppStandard": "c++17",
-            "intelliSenseMode": "linux-gcc-x64"
+            "intelliSenseMode": "macos-gcc-arm64"
         }
     ],
     "version": 4
