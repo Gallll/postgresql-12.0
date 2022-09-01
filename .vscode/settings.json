@@ -3,6 +3,7 @@
         "err.h": "c",
         "libpq-fe.h": "c",
         "ssl.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "getopt_long.h": "c"
     }
 }

@@ -1195,71 +1195,56 @@ connectOptions2(PGconn *conn)
 				if (conn->connhost[i].password != NULL)
 				{
 					int isencrpted = 0;
-					int num_password = 0;
-					while (num_password < 4)
+					if (conn->connhost[i].password[0] == '#' && conn->connhost[i].password[1] == '#' && conn->connhost[i].password[2] == '#' && conn->connhost[i].password[3] == '#' )
+						isencrpted = 1;
+					if (isencrpted == 1)
 					{
-						if (num_password < 3 && conn->connhost[i].password[num_password] == '#')
+						EVP_CIPHER_CTX *ctx;
+						unsigned char key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+						unsigned char iv[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+						unsigned char decdata[1024] = {0};
+						int tmplen = 16;
+						int declen = 0;
+						char *encode;
+						encode = conn->connhost[i].password + 4;
+						char decode[1024] = {0};
+						int base64_decode(char *in_str, int in_len, char *out_str);
+						int size = base64_decode(encode, strlen(encode), decode);
+
+						int ret;
+						OpenSSL_add_all_algorithms();
+						ctx = EVP_CIPHER_CTX_new();
+						ret = EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv);
+						if (ret != 1)
 						{
-							num_password++;
+							printf("EVP_EncryptFinal_ex failed.\n");
+							EVP_CIPHER_CTX_free(ctx);
 						}
-						else if (num_password == 3 && conn->connhost[i].password[num_password] == '#')
+
+						ret = EVP_DecryptUpdate(ctx, decdata, &declen, decode, size);
+						if (ret != 1)
 						{
-							num_password++;
-							isencrpted = 1;
+							printf("EVP_EncryptFinal_ex failed.\n");
+							EVP_CIPHER_CTX_free(ctx);
 						}
-						else
+
+						ret = EVP_DecryptFinal_ex(ctx, decdata + declen, &tmplen);
+						if (ret != 1)
 						{
-							break;
+							printf("EVP_EncryptFinal_ex failed.\n");
+							EVP_CIPHER_CTX_free(ctx);
 						}
-					}
-					if(isencrpted==1)
-					{
-					EVP_CIPHER_CTX *ctx;
-					unsigned char key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-					unsigned char iv[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-					unsigned char decdata[1024] = {0};
-					int tmplen = 16;
-					int declen = 0;
-					char *encode;
-					encode = conn->connhost[i].password+4;
-					char decode[1024] = {0};
-					int base64_decode(char *in_str, int in_len, char *out_str);
-					int size = base64_decode(encode, strlen(encode), decode);
 
-					int ret;
-					OpenSSL_add_all_algorithms();
-					ctx = EVP_CIPHER_CTX_new();
-					ret = EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv);
-					if (ret != 1)
-					{
-						printf("EVP_EncryptFinal_ex failed.\n");
-						EVP_CIPHER_CTX_free(ctx);
-					}
+						declen += tmplen;
 
-					ret = EVP_DecryptUpdate(ctx, decdata, &declen, decode, size);
-					if (ret != 1)
-					{
-						printf("EVP_EncryptFinal_ex failed.\n");
-						EVP_CIPHER_CTX_free(ctx);
-					}
-
-					ret = EVP_DecryptFinal_ex(ctx, decdata + declen, &tmplen);
-					if (ret != 1)
-					{
-						printf("EVP_EncryptFinal_ex failed.\n");
-						EVP_CIPHER_CTX_free(ctx);
-					}
-
-					declen += tmplen;
-
-					/* check the result */
-					// printf("decrypt message: %s.\n", decdata);
-					decdata[declen] = '\0';
-					char *password = (char *)malloc(declen + 1);
-					strcpy(password, decdata);
-					conn->connhost[i].password = password;
-					//printf("%s\n", conn->connhost[i].password);
-					}
+						/* check the result */
+						// printf("decrypt message: %s.\n", decdata);
+						decdata[declen] = '\0';
+						char *password = (char *)malloc(declen + 1);
+						strcpy(password, decdata);
+						conn->connhost[i].password = password;
+						// printf("%s\n", conn->connhost[i].password);
+						}
 				}
 			}
 		}
