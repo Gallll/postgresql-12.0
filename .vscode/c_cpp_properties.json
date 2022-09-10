@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/local/include/**",
-                "/opt/homebrew/opt/**",
+                "/opt/homebrew/opt/**"
                 
             ],
             "defines": [],
